@@ -38,3 +38,8 @@ $router->group(['middleware' => [CsrfMiddleware::class]], function($router) {
     $router->post('/cost-estimates', CostEstimatesController::class . '@store');
     $router->post('/contact', ContactController::class . '@store');
 });
+
+// Admin API routes
+$router->group(['prefix' => '/admin'], function($router) {
+    require __DIR__ . '/routes_admin.php';
+});
