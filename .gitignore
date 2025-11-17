@@ -31,3 +31,7 @@ tmp/
 temp/
 *.tmp
 *.cache
+
+# Uploads
+uploads/
+!uploads/.gitkeep

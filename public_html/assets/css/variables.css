@@ -15,6 +15,7 @@
     --color-bg-tertiary: #f3f4f6;
     --color-bg-overlay: rgba(0, 0, 0, 0.5);
     --color-bg-card: #ffffff;
+    --color-bg-inverse: #111827;
     
     --color-text-primary: #111827;
     --color-text-secondary: #6b7280;
@@ -95,6 +96,7 @@
     --color-bg-tertiary: #374151;
     --color-bg-overlay: rgba(0, 0, 0, 0.75);
     --color-bg-card: #1f2937;
+    --color-bg-inverse: #f9fafb;
     
     --color-text-primary: #f9fafb;
     --color-text-secondary: #d1d5db;

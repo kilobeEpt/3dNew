@@ -7,6 +7,11 @@
     overflow: hidden;
 }
 
+.hero-small {
+    min-height: auto;
+    padding: var(--spacing-12) 0;
+}
+
 .hero::before {
     content: '';
     position: absolute;

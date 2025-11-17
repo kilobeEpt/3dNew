@@ -31,5 +31,15 @@ class CostEstimate extends BaseModel
         'sent_at',
         'viewed_at',
         'accepted_at',
+        'file_path',
+        'file_original_name',
+        'file_size',
+        'file_mime_type',
+        'calculator_data',
+        'source',
+    ];
+
+    protected array $casts = [
+        'calculator_data' => 'json',
     ];
 }

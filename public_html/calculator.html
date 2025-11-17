@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculate the cost of your 3D printing project with our interactive calculator.">
+    <title>Cost Calculator - Manufacturing Platform</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/calculator.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header class="header">
+        <div class="container header-container">
+            <a href="/" class="header-logo" aria-label="Manufacturing Platform Home">
+                Manufacturing Platform
+            </a>
+            
+            <nav class="header-nav" aria-label="Main navigation">
+                <a href="/" class="header-nav-link">Home</a>
+                <a href="/services.html" class="header-nav-link">Services</a>
+                <a href="/materials.html" class="header-nav-link">Materials</a>
+                <a href="/gallery.html" class="header-nav-link">Gallery</a>
+                <a href="/news.html" class="header-nav-link">News</a>
+                <a href="/about.html" class="header-nav-link">About</a>
+                <a href="/contact.html" class="header-nav-link">Contact</a>
+                <a href="/calculator.html" class="header-nav-link active">Calculator</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" aria-label="Toggle theme">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                </button>
+                <button class="mobile-menu-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu">
+        <nav class="mobile-menu-nav">
+            <a href="/" class="mobile-menu-link">Home</a>
+            <a href="/services.html" class="mobile-menu-link">Services</a>
+            <a href="/materials.html" class="mobile-menu-link">Materials</a>
+            <a href="/gallery.html" class="mobile-menu-link">Gallery</a>
+            <a href="/news.html" class="mobile-menu-link">News</a>
+            <a href="/about.html" class="mobile-menu-link">About</a>
+            <a href="/contact.html" class="mobile-menu-link">Contact</a>
+            <a href="/calculator.html" class="mobile-menu-link">Calculator</a>
+        </nav>
+    </div>
+
+    <main id="main-content">
+        <section class="hero hero-small">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">3D Printing Cost Calculator</h1>
+                    <p class="hero-subtitle">Get an instant estimate for your 3D printing project</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="calculator-offline-message" id="offlineMessage" style="display: none;">
+            <div class="container">
+                <div class="alert alert-warning">
+                    <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <span>You are currently offline. Please check your connection to submit estimates.</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="container">
+                <div class="calculator-container">
+                    <div class="calculator-main">
+                        <form id="calculatorForm" class="calculator-form">
+                            <div class="form-section">
+                                <h2 class="form-section-title">
+                                    Material Selection
+                                    <span class="tooltip" data-tooltip="Choose the material for your 3D print">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </span>
+                                </h2>
+                                <div class="form-group">
+                                    <label for="material" class="form-label">Material</label>
+                                    <select id="material" name="material" class="form-select" required>
+                                        <option value="">Select a material...</option>
+                                    </select>
+                                    <div class="form-error" id="materialError"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2 class="form-section-title">
+                                    Print Settings
+                                    <span class="tooltip" data-tooltip="Higher quality = more time and material">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </span>
+                                </h2>
+                                <div class="form-group">
+                                    <label for="quality" class="form-label">Print Quality</label>
+                                    <select id="quality" name="quality" class="form-select" required>
+                                        <option value="draft">Draft (0.3mm layer height)</option>
+                                        <option value="standard" selected>Standard (0.2mm layer height)</option>
+                                        <option value="high">High Quality (0.1mm layer height)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Infill Density: <span id="infillValue">20</span>%
+                                    </label>
+                                    <input type="range" id="infill" name="infill" min="0" max="100" value="20" class="form-range">
+                                    <div class="form-hint">Higher infill = stronger but heavier and more expensive</div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2 class="form-section-title">Dimensions</h2>
+                                <div class="unit-toggle">
+                                    <button type="button" class="unit-toggle-btn active" data-unit="mm">mm</button>
+                                    <button type="button" class="unit-toggle-btn" data-unit="cm">cm</button>
+                                </div>
+                                <div class="dimensions-grid">
+                                    <div class="form-group">
+                                        <label for="width" class="form-label">Width (<span class="current-unit">mm</span>)</label>
+                                        <input type="number" id="width" name="width" class="form-input" min="1" step="0.1" placeholder="0.0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="height" class="form-label">Height (<span class="current-unit">mm</span>)</label>
+                                        <input type="number" id="height" name="height" class="form-input" min="1" step="0.1" placeholder="0.0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="length" class="form-label">Length (<span class="current-unit">mm</span>)</label>
+                                        <input type="number" id="length" name="length" class="form-input" min="1" step="0.1" placeholder="0.0" required>
+                                    </div>
+                                </div>
+                                <div class="form-hint">
+                                    Volume: <span id="volumeDisplay">0</span> cm³
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2 class="form-section-title">Finishing Options</h2>
+                                <div class="form-group">
+                                    <label for="finishing" class="form-label">Post-Processing</label>
+                                    <select id="finishing" name="finishing" class="form-select">
+                                        <option value="none" data-price="0">None</option>
+                                        <option value="sanding" data-price="15">Sanding (+$15)</option>
+                                        <option value="painting" data-price="35">Painting (+$35)</option>
+                                        <option value="premium" data-price="75">Premium Finish (+$75)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2 class="form-section-title">Quantity</h2>
+                                <div class="form-group">
+                                    <label for="quantity" class="form-label">Number of Pieces</label>
+                                    <input type="number" id="quantity" name="quantity" class="form-input" min="1" value="1" required>
+                                    <div class="form-hint">Bulk discounts may apply for quantities over 10</div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2 class="form-section-title">3D Model Upload (Optional)</h2>
+                                <div class="form-group">
+                                    <label class="file-upload-label">
+                                        <input type="file" id="modelFile" name="modelFile" accept=".stl,.obj,.3mf,.step,.stp" class="file-upload-input">
+                                        <div class="file-upload-area" id="fileUploadArea">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="48" height="48">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                            </svg>
+                                            <span class="file-upload-text">Click or drag to upload your 3D model</span>
+                                            <span class="file-upload-hint">Supported: STL, OBJ, 3MF, STEP (max 5MB)</span>
+                                        </div>
+                                    </label>
+                                    <div class="file-upload-preview" id="filePreview" style="display: none;">
+                                        <div class="file-preview-info">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                            <div>
+                                                <div class="file-preview-name" id="fileName"></div>
+                                                <div class="file-preview-size" id="fileSize"></div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="file-preview-remove" id="removeFile">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="form-error" id="fileError"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2 class="form-section-title">Contact Information</h2>
+                                <div class="form-group">
+                                    <label for="customerName" class="form-label">Your Name</label>
+                                    <input type="text" id="customerName" name="customerName" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customerEmail" class="form-label">Email Address</label>
+                                    <input type="email" id="customerEmail" name="customerEmail" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customerPhone" class="form-label">Phone Number (Optional)</label>
+                                    <input type="tel" id="customerPhone" name="customerPhone" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="notes" class="form-label">Additional Notes (Optional)</label>
+                                    <textarea id="notes" name="notes" class="form-textarea" rows="4" placeholder="Any special requirements or questions..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" id="clearBtn" class="btn btn-secondary">Clear Form</button>
+                                <button type="submit" id="submitBtn" class="btn btn-primary">
+                                    <span class="btn-text">Get Estimate</span>
+                                    <span class="btn-spinner" style="display: none;">
+                                        <svg class="spinner" viewBox="0 0 24 24">
+                                            <circle class="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <aside class="calculator-summary">
+                        <div class="summary-card">
+                            <h2 class="summary-title">Cost Estimate</h2>
+                            <div class="summary-loading" id="summaryLoading">
+                                <div class="summary-skeleton"></div>
+                                <div class="summary-skeleton"></div>
+                                <div class="summary-skeleton"></div>
+                            </div>
+                            <div class="summary-content" id="summaryContent" style="display: none;">
+                                <div class="summary-row">
+                                    <span>Material Cost:</span>
+                                    <span id="materialCost">$0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Print Time Cost:</span>
+                                    <span id="timeCost">$0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Finishing Cost:</span>
+                                    <span id="finishingCost">$0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Quantity:</span>
+                                    <span id="quantitySummary">1</span>
+                                </div>
+                                <div class="summary-divider"></div>
+                                <div class="summary-row summary-subtotal">
+                                    <span>Subtotal:</span>
+                                    <span id="subtotal">$0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Tax (<span id="taxRate">0</span>%):</span>
+                                    <span id="taxAmount">$0.00</span>
+                                </div>
+                                <div class="summary-divider"></div>
+                                <div class="summary-row summary-total">
+                                    <span>Total:</span>
+                                    <span id="total">$0.00</span>
+                                </div>
+                                <div class="summary-info">
+                                    <p><strong>Estimated Print Time:</strong> <span id="printTime">-</span></p>
+                                    <p><strong>Material Used:</strong> <span id="materialUsed">-</span></p>
+                                </div>
+                            </div>
+                            <div class="summary-actions">
+                                <button type="button" id="printSummary" class="btn btn-outline btn-block" disabled>
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                                    </svg>
+                                    Print Summary
+                                </button>
+                                <button type="button" id="downloadPDF" class="btn btn-outline btn-block" disabled>
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Download PDF
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">Manufacturing Platform</h3>
+                    <p class="footer-text">Providing quality manufacturing services and materials.</p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Quick Links</h4>
+                    <nav class="footer-nav">
+                        <a href="/services.html" class="footer-link">Services</a>
+                        <a href="/materials.html" class="footer-link">Materials</a>
+                        <a href="/gallery.html" class="footer-link">Gallery</a>
+                        <a href="/calculator.html" class="footer-link">Calculator</a>
+                    </nav>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Contact</h4>
+                    <nav class="footer-nav">
+                        <a href="/contact.html" class="footer-link">Contact Us</a>
+                        <a href="/about.html" class="footer-link">About Us</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Manufacturing Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal" id="confirmationModal" style="display: none;">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Estimate Submitted Successfully!</h3>
+                <button type="button" class="modal-close" id="modalClose">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="64" height="64">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p><strong>Estimate Number:</strong> <span id="estimateNumber"></span></p>
+                <p><strong>Total Amount:</strong> <span id="estimateTotal"></span></p>
+                <p>We've received your cost estimate request. You should receive a confirmation email shortly.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="newEstimateBtn" class="btn btn-secondary">New Estimate</button>
+                <button type="button" id="modalOkBtn" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+    </button>
+
+    <script type="module" src="/assets/js/main.js"></script>
+    <script type="module" src="/assets/js/navigation.js"></script>
+    <script type="module" src="/assets/js/theme.js"></script>
+    <script type="module" src="/assets/js/pages/calculator.js"></script>
+</body>
+</html>

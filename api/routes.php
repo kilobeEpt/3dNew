@@ -12,10 +12,13 @@ use App\Controllers\Api\SettingsController;
 use App\Controllers\Api\CostEstimatesController;
 use App\Controllers\Api\ContactController;
 use App\Controllers\Api\CsrfController;
+use App\Controllers\Api\AnalyticsController;
 use App\Middleware\CsrfMiddleware;
 
 $router->get('/health', HealthController::class . '@check');
 $router->get('/csrf-token', CsrfController::class . '@getToken');
+
+$router->post('/analytics/events', AnalyticsController::class . '@store');
 
 $router->get('/services', ServicesController::class . '@index');
 $router->get('/services/{id}', ServicesController::class . '@show');
