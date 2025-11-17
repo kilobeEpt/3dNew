@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        .content {
+            padding: 30px 20px;
+            background: #ffffff;
+        }
+        .content h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .info-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .field {
+            margin: 12px 0;
+            display: flex;
+        }
+        .field strong {
+            color: #555;
+            display: inline-block;
+            min-width: 120px;
+        }
+        .field span {
+            color: #333;
+            flex: 1;
+        }
+        .message-box {
+            background: #f0f5ff;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .message-box h4 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .message-content {
+            color: #333;
+            line-height: 1.8;
+        }
+        .footer {
+            background: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{SITE_NAME}}</h1>
+            <h2>New Contact Request</h2>
+        </div>
+        
+        <div class="content">
+            <h3>Request #{{REQUEST_NUMBER}} <span class="badge">{{REQUEST_TYPE}}</span></h3>
+            
+            <div class="info-section">
+                <div class="field">
+                    <strong>Name:</strong>
+                    <span>{{CUSTOMER_NAME}}</span>
+                </div>
+                <div class="field">
+                    <strong>Email:</strong>
+                    <span>{{CUSTOMER_EMAIL}}</span>
+                </div>
+                <div class="field">
+                    <strong>Phone:</strong>
+                    <span>{{CUSTOMER_PHONE}}</span>
+                </div>
+                <div class="field">
+                    <strong>Company:</strong>
+                    <span>{{CUSTOMER_COMPANY}}</span>
+                </div>
+                <div class="field">
+                    <strong>Subject:</strong>
+                    <span>{{SUBJECT}}</span>
+                </div>
+            </div>
+            
+            <div class="message-box">
+                <h4>Message:</h4>
+                <div class="message-content">
+                    {{MESSAGE}}
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2024 {{SITE_NAME}}. All rights reserved.</p>
+            <p>This is an automated notification. You can reply directly to this email to contact the customer.</p>
+        </div>
+    </div>
+</body>
+</html>

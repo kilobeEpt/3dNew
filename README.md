@@ -8,17 +8,19 @@ A modern, lightweight PHP-based API platform with built-in admin panel support, 
 - **Environment Configuration**: `.env` file support for managing environment-specific settings
 - **Service Container**: Dependency injection container for managing application services
 - **Lightweight Router**: RESTful routing with middleware support
-- **Middleware System**: Built-in CORS, Authentication, and Rate Limiting middleware
+- **Middleware System**: Built-in CORS, Authentication, Rate Limiting, and CSRF middleware
 - **Database Abstraction**: PDO-based database layer with prepared statements
 - **Database Migrations**: SQL-based migration system with tracking
 - **Database Seeding**: PHP-based seed system for initial data
 - **Active Record Models**: ORM-like models with CRUD operations and soft deletes
 - **Repository Pattern**: Advanced data access layer with pagination and search
-- **Email Service**: PHPMailer integration for sending emails
+- **Email Service**: PHPMailer integration for sending emails with HTML templates
 - **Request Validation**: Flexible validation helper for input data
 - **Error Handling**: Environment-aware error handling with detailed debugging
 - **Logging**: File-based logging with configurable log levels
 - **Asset Management**: CSS/JS minification support via npm scripts
+- **Public API**: REST endpoints with CAPTCHA, CSRF protection, and email notifications
+- **OpenAPI Documentation**: Complete API specification with Swagger support
 
 ## Directory Structure
 
@@ -121,28 +123,42 @@ project/
    - Application environment (development/production)
    - Security settings
 
-4. **Set up permissions**
+4. **Configure CAPTCHA (for public API)**
+   
+   Get your keys from:
+   - reCAPTCHA: https://www.google.com/recaptcha/admin
+   - hCaptcha: https://dashboard.hcaptcha.com/signup
+   
+   Add to `.env`:
+   ```env
+   CAPTCHA_TYPE=recaptcha
+   RECAPTCHA_SITE_KEY=your-site-key
+   RECAPTCHA_SECRET=your-secret-key
+   ADMIN_EMAIL=admin@example.com
+   ```
+
+5. **Set up permissions**
    ```bash
    chmod -R 755 logs/
    chmod -R 755 public_html/assets/
    ```
 
-5. **Install Node.js dependencies (optional)**
+6. **Install Node.js dependencies (optional)**
    ```bash
    npm install
    ```
 
-6. **Build assets (optional)**
+7. **Build assets (optional)**
    ```bash
    npm run build
    ```
 
-7. **Run database migrations**
+8. **Run database migrations**
    ```bash
    php database/migrate.php
    ```
 
-8. **Seed initial data (optional)**
+9. **Seed initial data (optional)**
    ```bash
    php database/seed.php
    ```
@@ -184,6 +200,12 @@ For shared hosting environments (cPanel, Plesk, etc.):
 ### Security Settings
 - `JWT_SECRET`: Secret key for JWT tokens
 - `API_RATE_LIMIT`: API rate limit per hour (default: 100)
+- `CAPTCHA_TYPE`: CAPTCHA provider (`recaptcha` or `hcaptcha`)
+- `RECAPTCHA_SITE_KEY`: reCAPTCHA site key
+- `RECAPTCHA_SECRET`: reCAPTCHA secret key
+- `HCAPTCHA_SITE_KEY`: hCaptcha site key
+- `HCAPTCHA_SECRET`: hCaptcha secret key
+- `ADMIN_EMAIL`: Admin email for notifications
 
 ### CORS Settings
 - `CORS_ALLOWED_ORIGINS`: Allowed origins (`*` for all)
@@ -470,11 +492,30 @@ npm run watch
 
 ## Testing
 
-The health check endpoint can be used to verify the setup:
+### Testing the API
 
-```bash
-curl http://localhost:8000/api/health
-```
+1. **Health check endpoint:**
+   ```bash
+   curl http://localhost:8000/api/health
+   ```
+
+2. **Test public API endpoints:**
+   ```bash
+   # List services
+   curl http://localhost:8000/api/services
+   
+   # List materials
+   curl http://localhost:8000/api/materials
+   
+   # Get public settings
+   curl http://localhost:8000/api/settings
+   ```
+
+3. **Interactive testing:**
+   Open in browser:
+   ```
+   http://localhost:8000/api-example.html
+   ```
 
 Or visit the frontend and click the "Check API Health" button.
 
@@ -482,11 +523,14 @@ Or visit the frontend and click the "Check API Health" button.
 
 1. **Never commit `.env` file**: Keep sensitive credentials out of version control
 2. **Use HTTPS in production**: Encrypt data in transit
-3. **Implement proper authentication**: The provided AuthMiddleware is a placeholder
-4. **Validate all inputs**: Use the Validator helper for all user inputs
-5. **Keep dependencies updated**: Regularly update Composer and npm packages
-6. **Set appropriate file permissions**: Restrict write access to necessary directories only
-7. **Enable error logging in production**: Set `APP_DEBUG=false` in production
+3. **Configure CAPTCHA**: Use reCAPTCHA or hCaptcha for form submissions
+4. **Restrict CORS origins**: Set specific domains in production, not `*`
+5. **Implement proper authentication**: The provided AuthMiddleware is a placeholder
+6. **Validate all inputs**: Use the Validator helper for all user inputs
+7. **Keep dependencies updated**: Regularly update Composer and npm packages
+8. **Set appropriate file permissions**: Restrict write access to necessary directories only
+9. **Enable error logging in production**: Set `APP_DEBUG=false` in production
+10. **Monitor rate limits**: Adjust `API_RATE_LIMIT` based on your needs
 
 ## Troubleshooting
 
@@ -513,7 +557,10 @@ Or visit the frontend and click the "Check API Health" button.
 For more detailed information, see:
 
 - [DATABASE.md](DATABASE.md) - Complete database documentation, migrations, seeds, and data access layers
-- [API.md](API.md) - API endpoint documentation
+- [API.md](API.md) - General API endpoint documentation
+- [API_PUBLIC.md](API_PUBLIC.md) - **Public API documentation with examples**
+- [QUICKSTART_API.md](QUICKSTART_API.md) - **Quick start guide for the public API**
+- [openapi.yaml](openapi.yaml) - **OpenAPI/Swagger specification**
 - [INSTALLATION.md](INSTALLATION.md) - Detailed installation guide
 - [CODING_STANDARDS.md](CODING_STANDARDS.md) - Code style and standards
 - [QUICKSTART.md](QUICKSTART.md) - Quick start guide
