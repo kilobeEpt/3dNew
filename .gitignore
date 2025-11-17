@@ -23,6 +23,7 @@ Thumbs.db
 
 # Build artifacts
 public_html/assets/dist/
+admin/assets/dist/
 *.min.css
 *.min.js
 
