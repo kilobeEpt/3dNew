@@ -1,80 +1,64 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const healthCheckBtn = document.getElementById('health-check');
-    const healthStatus = document.getElementById('health-status');
-    const healthOutput = document.getElementById('health-output');
+import { themeManager } from './theme.js';
+import { Navigation } from './navigation.js';
+import { setupBackToTop, setupFadeInAnimations } from './utils.js';
 
-    if (healthCheckBtn) {
-        healthCheckBtn.addEventListener('click', async function() {
-            try {
-                healthCheckBtn.disabled = true;
-                healthCheckBtn.textContent = 'Checking...';
+class App {
+    constructor() {
+        this.init();
+    }
 
-                const response = await fetch('/api/health');
-                const data = await response.json();
+    init() {
+        this.setupThemeToggle();
+        this.navigation = new Navigation();
+        setupBackToTop();
+        setupFadeInAnimations();
+        this.setupAccessibility();
+    }
 
-                healthOutput.textContent = JSON.stringify(data, null, 2);
-                healthStatus.style.display = 'block';
+    setupThemeToggle() {
+        const themeToggle = document.querySelector('.theme-toggle');
+        if (!themeToggle) return;
 
-                healthCheckBtn.textContent = 'Check API Health';
-                healthCheckBtn.disabled = false;
-            } catch (error) {
-                healthOutput.textContent = 'Error: ' + error.message;
-                healthStatus.style.display = 'block';
-                
-                healthCheckBtn.textContent = 'Check API Health';
-                healthCheckBtn.disabled = false;
+        this.updateThemeIcon(themeToggle, themeManager.getTheme());
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = themeManager.toggle();
+            this.updateThemeIcon(themeToggle, newTheme);
+        });
+
+        themeManager.onThemeChange((theme) => {
+            this.updateThemeIcon(themeToggle, theme);
+        });
+    }
+
+    updateThemeIcon(button, theme) {
+        const isDark = theme === 'dark';
+        button.innerHTML = isDark
+            ? `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>`
+            : `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+              </svg>`;
+        button.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+
+    setupAccessibility() {
+        document.addEventListener('DOMContentLoaded', () => {
+            const main = document.querySelector('main');
+            if (main && !main.getAttribute('id')) {
+                main.setAttribute('id', 'main-content');
             }
         });
     }
-});
-
-const API_BASE_URL = '/api';
-
-async function apiRequest(endpoint, options = {}) {
-    const defaultOptions = {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
-
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-        defaultOptions.headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const mergedOptions = {
-        ...defaultOptions,
-        ...options,
-        headers: {
-            ...defaultOptions.headers,
-            ...options.headers,
-        },
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, mergedOptions);
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Request failed');
-        }
-
-        return data;
-    } catch (error) {
-        console.error('API Request Error:', error);
-        throw error;
-    }
 }
 
-window.api = {
-    get: (endpoint) => apiRequest(endpoint, { method: 'GET' }),
-    post: (endpoint, body) => apiRequest(endpoint, { 
-        method: 'POST', 
-        body: JSON.stringify(body) 
-    }),
-    put: (endpoint, body) => apiRequest(endpoint, { 
-        method: 'PUT', 
-        body: JSON.stringify(body) 
-    }),
-    delete: (endpoint) => apiRequest(endpoint, { method: 'DELETE' }),
-};
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        new App();
+    });
+} else {
+    new App();
+}
+
+export { App };
