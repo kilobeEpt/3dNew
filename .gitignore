@@ -1,0 +1,33 @@
+# Dependencies
+/vendor/
+node_modules/
+
+# Environment
+.env
+
+# Logs
+logs/*.log
+logs/*.txt
+!logs/.gitkeep
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+public_html/assets/dist/
+*.min.css
+*.min.js
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.cache

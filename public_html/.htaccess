@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# Serve static files directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# For API requests, proxy to the api directory
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^api/(.*)$ /api/index.php [L,QSA]
+
+# For admin requests, proxy to the admin directory
+RewriteCond %{REQUEST_URI} ^/admin/
+RewriteRule ^admin/(.*)$ /admin/index.php [L,QSA]
+
+# Otherwise serve the frontend
+RewriteRule ^ index.html [L]
