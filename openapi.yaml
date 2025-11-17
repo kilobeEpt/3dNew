@@ -1,0 +1,1030 @@
+openapi: 3.0.3
+info:
+  title: Manufacturing Platform Public API
+  description: |
+    Public API endpoints for fetching services, materials, pricing rules, gallery items, news, 
+    and site settings. Also includes POST endpoints for cost estimate submissions and contact requests.
+    
+    ## Features
+    - JSON responses with consistent error handling
+    - Pagination and filtering support for list endpoints
+    - Cache headers for GET endpoints
+    - Rate limiting (100 requests per hour by default)
+    - CAPTCHA protection for POST endpoints
+    - CSRF protection for same-origin requests
+    - Email notifications for submissions
+    
+    ## Security
+    - All POST endpoints require CAPTCHA verification (reCAPTCHA or hCaptcha)
+    - Same-origin requests require CSRF token
+    - Input validation and sanitization
+    - SQL injection protection via prepared statements
+    - Rate limiting to prevent abuse
+    
+    ## CORS
+    Configure allowed origins in `.env` file:
+    ```
+    CORS_ALLOWED_ORIGINS=https://yourdomain.com
+    ```
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: admin@example.com
+
+servers:
+  - url: http://localhost:8000/api
+    description: Development server
+  - url: https://api.yourdomain.com/api
+    description: Production server
+
+tags:
+  - name: Services
+    description: Service and product listings
+  - name: Materials
+    description: Materials and components
+  - name: Pricing Rules
+    description: Dynamic pricing rules and presets
+  - name: Gallery
+    description: Portfolio and gallery items
+  - name: News
+    description: News posts and blog articles
+  - name: Settings
+    description: Public site settings
+  - name: Submissions
+    description: Cost estimates and contact requests
+  - name: Security
+    description: CSRF token management
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Check the health status of the API and its services
+      tags:
+        - System
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  timestamp:
+                    type: string
+                    format: date-time
+                  services:
+                    type: object
+                    properties:
+                      api:
+                        type: string
+                        example: up
+                      database:
+                        type: string
+                        example: up
+
+  /csrf-token:
+    get:
+      summary: Get CSRF token
+      description: Retrieve a CSRF token for same-origin POST requests
+      tags:
+        - Security
+      responses:
+        '200':
+          description: CSRF token generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                success: true
+                message: Success
+                data:
+                  csrf_token: "a1b2c3d4e5f6..."
+
+  /services:
+    get:
+      summary: List services
+      description: Retrieve a paginated list of visible services with optional filtering
+      tags:
+        - Services
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: category
+          in: query
+          description: Filter by category ID
+          schema:
+            type: integer
+        - name: featured
+          in: query
+          description: Filter featured services only
+          schema:
+            type: boolean
+        - name: search
+          in: query
+          description: Search services by name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of services
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=300
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Service'
+                          pagination:
+                            $ref: '#/components/schemas/Pagination'
+
+  /services/{id}:
+    get:
+      summary: Get service by ID or slug
+      description: Retrieve a single service by numeric ID or slug
+      tags:
+        - Services
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Service ID or slug
+          schema:
+            oneOf:
+              - type: integer
+              - type: string
+      responses:
+        '200':
+          description: Service details
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=300
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Service'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /materials:
+    get:
+      summary: List materials
+      description: Retrieve a paginated list of active materials with optional filtering
+      tags:
+        - Materials
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: category
+          in: query
+          description: Filter by category name
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Search materials by name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of materials
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=600
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Material'
+                          pagination:
+                            $ref: '#/components/schemas/Pagination'
+
+  /materials/{id}:
+    get:
+      summary: Get material by ID
+      description: Retrieve a single material by ID
+      tags:
+        - Materials
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Material ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Material details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Material'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /materials/categories:
+    get:
+      summary: List material categories
+      description: Retrieve all unique material categories
+      tags:
+        - Materials
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /pricing-rules:
+    get:
+      summary: List active pricing rules
+      description: Retrieve currently active pricing rules and presets
+      tags:
+        - Pricing Rules
+      parameters:
+        - name: type
+          in: query
+          description: Filter by rule type
+          schema:
+            type: string
+            enum: [discount, markup, custom]
+      responses:
+        '200':
+          description: List of pricing rules
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=300
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/PricingRule'
+                          pagination:
+                            $ref: '#/components/schemas/Pagination'
+
+  /gallery:
+    get:
+      summary: List gallery items
+      description: Retrieve a paginated list of visible gallery items
+      tags:
+        - Gallery
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: string
+        - name: featured
+          in: query
+          description: Filter featured items only
+          schema:
+            type: boolean
+        - name: service_id
+          in: query
+          description: Filter by related service ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of gallery items
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=600
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/GalleryItem'
+                          pagination:
+                            $ref: '#/components/schemas/Pagination'
+
+  /gallery/{id}:
+    get:
+      summary: Get gallery item
+      description: Retrieve a single gallery item and increment view count
+      tags:
+        - Gallery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Gallery item ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Gallery item details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GalleryItem'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /news:
+    get:
+      summary: List news posts
+      description: Retrieve a paginated list of published news posts
+      tags:
+        - News
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: string
+        - name: featured
+          in: query
+          description: Filter featured posts only
+          schema:
+            type: boolean
+        - name: search
+          in: query
+          description: Search posts by title, excerpt, or content
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of news posts
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=300
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/NewsPost'
+                          pagination:
+                            $ref: '#/components/schemas/Pagination'
+
+  /news/{id}:
+    get:
+      summary: Get news post
+      description: Retrieve a single news post by ID or slug and increment view count
+      tags:
+        - News
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: News post ID or slug
+          schema:
+            oneOf:
+              - type: integer
+              - type: string
+      responses:
+        '200':
+          description: News post details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/NewsPost'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /settings:
+    get:
+      summary: Get public site settings
+      description: Retrieve public site settings, optionally filtered by group
+      tags:
+        - Settings
+      parameters:
+        - name: group
+          in: query
+          description: Filter by settings group
+          schema:
+            type: string
+            example: contact
+      responses:
+        '200':
+          description: Public site settings
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=3600
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        additionalProperties: true
+                        example:
+                          site_name: "Manufacturing Platform"
+                          contact_email: "info@example.com"
+                          tax_rate: 8.5
+
+  /cost-estimates:
+    post:
+      summary: Submit cost estimate request
+      description: |
+        Submit a new cost estimate request with items. This endpoint:
+        - Validates all input fields
+        - Verifies CAPTCHA token
+        - Calculates totals (subtotal, tax, discount, total)
+        - Creates estimate record with items
+        - Sends email notification to admin
+        - Returns estimate number for tracking
+        
+        **CAPTCHA Required**: Include a valid CAPTCHA token from reCAPTCHA or hCaptcha.
+        
+        **CSRF Protection**: Same-origin requests must include CSRF token.
+      tags:
+        - Submissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CostEstimateRequest'
+      responses:
+        '201':
+          description: Cost estimate created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          estimate_number:
+                            type: string
+                            example: "EST20240101001"
+                          estimate_id:
+                            type: integer
+                            example: 1
+                          total_amount:
+                            type: number
+                            format: float
+                            example: 1085.00
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /contact:
+    post:
+      summary: Submit contact request
+      description: |
+        Submit a new contact/inquiry request. This endpoint:
+        - Validates all input fields
+        - Verifies CAPTCHA token
+        - Creates customer request record
+        - Sends email notification to admin
+        - Returns request number for tracking
+        
+        **CAPTCHA Required**: Include a valid CAPTCHA token from reCAPTCHA or hCaptcha.
+        
+        **CSRF Protection**: Same-origin requests must include CSRF token.
+      tags:
+        - Submissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+      responses:
+        '201':
+          description: Contact request created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          request_number:
+                            type: string
+                            example: "REQ20240101001"
+                          request_id:
+                            type: integer
+                            example: 1
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+components:
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    
+    PerPageParam:
+      name: per_page
+      in: query
+      description: Items per page (max 100)
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Success
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Error message
+        errors:
+          type: object
+          nullable: true
+
+    Pagination:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 100
+        last_page:
+          type: integer
+          example: 5
+        from:
+          type: integer
+          example: 1
+        to:
+          type: integer
+          example: 20
+
+    Service:
+      type: object
+      properties:
+        id:
+          type: integer
+        category_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        short_description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          nullable: true
+        price_type:
+          type: string
+          enum: [fixed, hourly, quote]
+        base_price:
+          type: number
+          format: float
+          nullable: true
+        unit:
+          type: string
+          nullable: true
+        display_order:
+          type: integer
+        is_visible:
+          type: boolean
+        is_featured:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Material:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        category:
+          type: string
+          nullable: true
+        unit:
+          type: string
+        unit_price:
+          type: number
+          format: float
+        stock_quantity:
+          type: number
+          format: float
+          nullable: true
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    PricingRule:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        rule_type:
+          type: string
+        condition_type:
+          type: string
+        discount_type:
+          type: string
+        discount_value:
+          type: number
+          format: float
+        priority:
+          type: integer
+        valid_from:
+          type: string
+          format: date-time
+          nullable: true
+        valid_to:
+          type: string
+          format: date-time
+          nullable: true
+
+    GalleryItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        file_path:
+          type: string
+        file_type:
+          type: string
+        thumbnail_path:
+          type: string
+          nullable: true
+        category:
+          type: string
+          nullable: true
+        service_id:
+          type: integer
+          nullable: true
+        is_featured:
+          type: boolean
+        view_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    NewsPost:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: string
+          nullable: true
+        content:
+          type: string
+        featured_image:
+          type: string
+          nullable: true
+        category:
+          type: string
+          nullable: true
+        is_featured:
+          type: boolean
+        view_count:
+          type: integer
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    CostEstimateRequest:
+      type: object
+      required:
+        - customer_name
+        - customer_email
+        - title
+        - items
+        - captcha_token
+      properties:
+        customer_name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "John Doe"
+        customer_email:
+          type: string
+          format: email
+          maxLength: 100
+          example: "john@example.com"
+        customer_phone:
+          type: string
+          maxLength: 20
+          example: "+1-555-0123"
+        title:
+          type: string
+          minLength: 5
+          maxLength: 200
+          example: "Custom CNC Machining Project"
+        description:
+          type: string
+          maxLength: 2000
+          example: "Need precision machining for aluminum parts"
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - description
+              - quantity
+              - unit
+              - unit_price
+            properties:
+              item_type:
+                type: string
+                example: "service"
+              item_id:
+                type: integer
+                example: 1
+              description:
+                type: string
+                minLength: 3
+                maxLength: 500
+                example: "CNC Machining - 10 hours"
+              quantity:
+                type: number
+                format: float
+                minimum: 0
+                example: 10
+              unit:
+                type: string
+                maxLength: 20
+                example: "hours"
+              unit_price:
+                type: number
+                format: float
+                minimum: 0
+                example: 75.00
+        tax_rate:
+          type: number
+          format: float
+          example: 8.5
+        discount_amount:
+          type: number
+          format: float
+          example: 0
+        currency:
+          type: string
+          example: "USD"
+        notes:
+          type: string
+          example: "Additional notes"
+        captcha_token:
+          type: string
+          description: reCAPTCHA or hCaptcha response token
+          example: "03AGdBq24..."
+        csrf_token:
+          type: string
+          description: CSRF token for same-origin requests
+          example: "a1b2c3d4e5f6..."
+
+    ContactRequest:
+      type: object
+      required:
+        - customer_name
+        - customer_email
+        - subject
+        - message
+        - captcha_token
+      properties:
+        customer_name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "Jane Smith"
+        customer_email:
+          type: string
+          format: email
+          maxLength: 100
+          example: "jane@example.com"
+        customer_phone:
+          type: string
+          maxLength: 20
+          example: "+1-555-0456"
+        customer_company:
+          type: string
+          maxLength: 100
+          example: "Acme Corp"
+        service_id:
+          type: integer
+          example: 1
+        subject:
+          type: string
+          minLength: 5
+          maxLength: 200
+          example: "Inquiry about CNC services"
+        message:
+          type: string
+          minLength: 10
+          maxLength: 2000
+          example: "I would like to get more information about your CNC machining services..."
+        request_type:
+          type: string
+          enum: [general, quote, support, partnership]
+          default: general
+          example: "quote"
+        estimated_budget:
+          type: string
+          example: "$5000-$10000"
+        captcha_token:
+          type: string
+          description: reCAPTCHA or hCaptcha response token
+          example: "03AGdBq24..."
+        csrf_token:
+          type: string
+          description: CSRF token for same-origin requests
+          example: "a1b2c3d4e5f6..."
+
+  responses:
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: true
+            message: Resource not found
+            errors: null
+
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: true
+            message: Validation failed
+            errors:
+              customer_email:
+                - "The customer_email must be a valid email address"
+              captcha_token:
+                - "The captcha_token field is required"
+
+    RateLimitError:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: true
+            message: Too many requests. Please try again later.
+            errors: null

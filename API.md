@@ -2,6 +2,12 @@
 
 This document describes the API endpoints available in the platform.
 
+## Public API
+
+For public-facing endpoints (services, materials, gallery, news, cost estimates, contact), see:
+- **[Public API Documentation](API_PUBLIC.md)** - Comprehensive guide with examples
+- **[OpenAPI Specification](openapi.yaml)** - Machine-readable API spec
+
 ## Base URL
 
 ```
