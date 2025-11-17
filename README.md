@@ -10,6 +10,10 @@ A modern, lightweight PHP-based API platform with built-in admin panel support, 
 - **Lightweight Router**: RESTful routing with middleware support
 - **Middleware System**: Built-in CORS, Authentication, and Rate Limiting middleware
 - **Database Abstraction**: PDO-based database layer with prepared statements
+- **Database Migrations**: SQL-based migration system with tracking
+- **Database Seeding**: PHP-based seed system for initial data
+- **Active Record Models**: ORM-like models with CRUD operations and soft deletes
+- **Repository Pattern**: Advanced data access layer with pagination and search
 - **Email Service**: PHPMailer integration for sending emails
 - **Request Validation**: Flexible validation helper for input data
 - **Error Handling**: Environment-aware error handling with detailed debugging
@@ -51,11 +55,26 @@ project/
 │   │   ├── CorsMiddleware.php
 │   │   ├── AuthMiddleware.php
 │   │   └── RateLimitMiddleware.php
+│   ├── Models/            # Active Record models
+│   │   ├── BaseModel.php  # Base model class
+│   │   ├── AdminUser.php  # Admin user model
+│   │   ├── Service.php    # Service model
+│   │   └── ...            # Other models
+│   ├── Repositories/      # Repository classes
+│   │   ├── BaseRepository.php # Base repository
+│   │   ├── ServiceRepository.php
+│   │   └── ...            # Other repositories
 │   ├── Helpers/           # Helper classes
 │   │   ├── Response.php   # Response helper
 │   │   └── Validator.php  # Validation helper
 │   └── Services/          # Service classes
 │       └── Mailer.php     # Email service
+├── database/              # Database management
+│   ├── migrations/        # SQL migration files
+│   ├── seeds/             # Database seed files
+│   ├── schema/            # Schema documentation
+│   ├── migrate.php        # Migration runner
+│   └── seed.php           # Seed runner
 ├── templates/             # Shared templates
 │   └── email/             # Email templates
 ├── logs/                  # Application logs
@@ -116,6 +135,16 @@ project/
 6. **Build assets (optional)**
    ```bash
    npm run build
+   ```
+
+7. **Run database migrations**
+   ```bash
+   php database/migrate.php
+   ```
+
+8. **Seed initial data (optional)**
+   ```bash
+   php database/seed.php
    ```
 
 ### Shared Hosting Setup
@@ -256,9 +285,88 @@ if ($validator->fails()) {
 }
 ```
 
-### Database Queries
+### Database
 
-Use the database service:
+The platform includes a comprehensive database management system with migrations, seeds, and data access layers.
+
+#### Running Migrations
+
+```bash
+# Run all pending migrations
+php database/migrate.php
+```
+
+Migrations are tracked automatically and only executed once.
+
+#### Seeding Data
+
+```bash
+# Insert initial data
+php database/seed.php
+```
+
+#### Using Models (Active Record Pattern)
+
+Models provide ORM-like CRUD operations with soft delete support:
+
+```php
+use App\Core\Container;
+use App\Models\Service;
+
+$database = Container::getInstance()->get('database');
+$serviceModel = new Service($database);
+
+// Find all
+$services = $serviceModel->all();
+
+// Find by ID
+$service = $serviceModel->find(1);
+
+// Find with conditions
+$activeServices = $serviceModel->where(['is_visible' => true]);
+
+// Create
+$id = $serviceModel->create([
+    'name' => 'Custom Service',
+    'slug' => 'custom-service',
+    'price_type' => 'quote',
+]);
+
+// Update
+$serviceModel->update($id, ['name' => 'Updated Name']);
+
+// Delete (soft delete if enabled)
+$serviceModel->delete($id);
+
+// Pagination
+$result = $serviceModel->paginate($page = 1, $perPage = 20);
+```
+
+#### Using Repositories (Repository Pattern)
+
+Repositories provide advanced query methods:
+
+```php
+use App\Repositories\ServiceRepository;
+
+$serviceRepo = new ServiceRepository($database);
+
+// Custom methods
+$service = $serviceRepo->findBySlug('custom-service');
+$featured = $serviceRepo->findFeatured(6);
+$visible = $serviceRepo->findVisible();
+
+// Base methods
+$paginated = $serviceRepo->paginate(1, 20, ['is_visible' => true]);
+$count = $serviceRepo->count(['is_visible' => true]);
+$results = $serviceRepo->search('name', 'aluminum');
+```
+
+See [DATABASE.md](DATABASE.md) for complete documentation.
+
+### Raw Database Queries
+
+For direct database access:
 
 ```php
 use App\Core\Container;
@@ -399,6 +507,18 @@ Or visit the frontend and click the "Check API Health" button.
 - Verify SMTP credentials in `.env`
 - Check firewall/port access to SMTP server
 - Review logs for detailed error messages
+
+## Documentation
+
+For more detailed information, see:
+
+- [DATABASE.md](DATABASE.md) - Complete database documentation, migrations, seeds, and data access layers
+- [API.md](API.md) - API endpoint documentation
+- [INSTALLATION.md](INSTALLATION.md) - Detailed installation guide
+- [CODING_STANDARDS.md](CODING_STANDARDS.md) - Code style and standards
+- [QUICKSTART.md](QUICKSTART.md) - Quick start guide
+- [database/schema/README.md](database/schema/README.md) - Database schema documentation
+- [database/TESTING.md](database/TESTING.md) - Database testing guide
 
 ## License
 

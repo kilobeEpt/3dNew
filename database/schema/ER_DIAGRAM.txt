@@ -1,0 +1,433 @@
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                        DATABASE SCHEMA - ER DIAGRAM                                   │
+│                     Manufacturing Services API Platform                               │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                              CORE ENTITIES
+═══════════════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────┐
+│         admin_users                     │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ UK  username (VARCHAR)                  │
+│ UK  email (VARCHAR)                     │
+│     password (VARCHAR)                  │
+│     first_name (VARCHAR)                │
+│     last_name (VARCHAR)                 │
+│     role (ENUM)                         │
+│     status (ENUM)                       │
+│     last_login_at (TIMESTAMP)           │
+│     last_login_ip (VARCHAR)             │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+          │
+          │ 1:N
+          ├───────────────────┐
+          │                   │
+          ▼                   ▼
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                           SERVICE MANAGEMENT
+═══════════════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────┐
+│      service_categories                 │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ FK  parent_id (BIGINT) → self           │◄───┐ Self-referencing
+│ UK  slug (VARCHAR)                      │    │ (hierarchical)
+│     name (VARCHAR)                      │    │
+│     description (TEXT)                  │    │
+│     icon (VARCHAR)                      │────┘
+│     image (VARCHAR)                     │
+│     display_order (INT)                 │
+│     is_visible (BOOLEAN)                │
+│     meta_title (VARCHAR)                │
+│     meta_description (TEXT)             │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+          │
+          │ 1:N
+          ▼
+┌─────────────────────────────────────────┐
+│           services                      │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ FK  category_id → service_categories    │
+│ UK  slug (VARCHAR)                      │
+│     name (VARCHAR)                      │
+│     description (TEXT)                  │
+│     short_description (VARCHAR)         │
+│     image (VARCHAR)                     │
+│     price_type (ENUM)                   │
+│     base_price (DECIMAL)                │
+│     unit (VARCHAR)                      │
+│     display_order (INT)                 │
+│     is_visible (BOOLEAN)                │
+│     is_featured (BOOLEAN)               │
+│     meta_title (VARCHAR)                │
+│     meta_description (TEXT)             │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+          │
+          │ 1:N
+          ├───────────────────┐
+          │                   │
+          ▼                   ▼
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                          MATERIAL MANAGEMENT
+═══════════════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────┐
+│            materials                    │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ UK  slug (VARCHAR)                      │
+│ UK  sku (VARCHAR)                       │
+│     name (VARCHAR)                      │
+│     description (TEXT)                  │
+│     category (VARCHAR)                  │
+│     unit (VARCHAR)                      │
+│     unit_price (DECIMAL)                │
+│     stock_quantity (DECIMAL)            │
+│     min_order_quantity (DECIMAL)        │
+│     supplier (VARCHAR)                  │
+│     supplier_sku (VARCHAR)              │
+│     image (VARCHAR)                     │
+│     is_active (BOOLEAN)                 │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+          │
+          │ 1:N
+          ▼
+┌─────────────────────────────────────────┐
+│       material_properties               │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ FK  material_id → materials [CASCADE]   │
+│     property_name (VARCHAR)             │
+│     property_value (TEXT)               │
+│     property_type (ENUM)                │
+│     display_order (INT)                 │
+│     is_searchable (BOOLEAN)             │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+└─────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                        PRICING & ESTIMATION
+═══════════════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────┐
+│         pricing_rules                   │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│     name (VARCHAR)                      │
+│     description (TEXT)                  │
+│     rule_type (ENUM)                    │
+│     target_id (BIGINT) [polymorphic]    │
+│     condition_type (ENUM)               │
+│     condition_value (JSON)              │
+│     discount_type (ENUM)                │
+│     discount_value (DECIMAL)            │
+│     priority (INT)                      │
+│     is_active (BOOLEAN)                 │
+│     valid_from (DATE)                   │
+│     valid_to (DATE)                     │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────┐
+│       customer_requests                 │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ UK  request_number (VARCHAR)            │
+│ FK  service_id → services               │
+│ FK  assigned_to → admin_users           │
+│     customer_name (VARCHAR)             │
+│     customer_email (VARCHAR)            │
+│     customer_phone (VARCHAR)            │
+│     customer_company (VARCHAR)          │
+│     subject (VARCHAR)                   │
+│     message (TEXT)                      │
+│     request_type (ENUM)                 │
+│     priority (ENUM)                     │
+│     status (ENUM)                       │
+│     estimated_budget (DECIMAL)          │
+│     notes (TEXT)                        │
+│     metadata (JSON)                     │
+│     ip_address (VARCHAR)                │
+│     user_agent (VARCHAR)                │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+          │
+          │ 1:N
+          ▼
+┌─────────────────────────────────────────┐
+│         cost_estimates                  │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ UK  estimate_number (VARCHAR)           │
+│ FK  customer_request_id → customer_req  │
+│ FK  created_by → admin_users            │
+│     customer_name (VARCHAR)             │
+│     customer_email (VARCHAR)            │
+│     customer_phone (VARCHAR)            │
+│     title (VARCHAR)                     │
+│     description (TEXT)                  │
+│     subtotal (DECIMAL)                  │
+│     tax_rate (DECIMAL)                  │
+│     tax_amount (DECIMAL)                │
+│     discount_amount (DECIMAL)           │
+│     total_amount (DECIMAL)              │
+│     currency (VARCHAR)                  │
+│     status (ENUM)                       │
+│     valid_until (DATE)                  │
+│     notes (TEXT)                        │
+│     terms_conditions (TEXT)             │
+│     sent_at (TIMESTAMP)                 │
+│     viewed_at (TIMESTAMP)               │
+│     accepted_at (TIMESTAMP)             │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+          │
+          │ 1:N
+          ▼
+┌─────────────────────────────────────────┐
+│      cost_estimate_items                │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ FK  estimate_id → cost_estimates [CASC] │
+│     item_type (ENUM)                    │
+│     item_id (BIGINT) [polymorphic]      │
+│     description (VARCHAR)               │
+│     quantity (DECIMAL)                  │
+│     unit (VARCHAR)                      │
+│     unit_price (DECIMAL)                │
+│     line_total (DECIMAL)                │
+│     display_order (INT)                 │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+└─────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                         CONTENT MANAGEMENT
+═══════════════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────┐
+│           news_posts                    │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ FK  author_id → admin_users             │
+│ UK  slug (VARCHAR)                      │
+│     title (VARCHAR)                     │
+│     excerpt (VARCHAR)                   │
+│     content (LONGTEXT)                  │
+│     featured_image (VARCHAR)            │
+│     category (VARCHAR)                  │
+│     tags (JSON)                         │
+│     status (ENUM)                       │
+│     is_featured (BOOLEAN)               │
+│     view_count (INT)                    │
+│     published_at (TIMESTAMP)            │
+│     meta_title (VARCHAR)                │
+│     meta_description (TEXT)             │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────┐
+│          gallery_items                  │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ UK  slug (VARCHAR)                      │
+│ FK  service_id → services               │
+│ FK  uploaded_by → admin_users           │
+│     title (VARCHAR)                     │
+│     description (TEXT)                  │
+│     file_path (VARCHAR)                 │
+│     file_type (ENUM)                    │
+│     file_size (INT)                     │
+│     mime_type (VARCHAR)                 │
+│     width (INT)                         │
+│     height (INT)                        │
+│     thumbnail_path (VARCHAR)            │
+│     category (VARCHAR)                  │
+│     tags (JSON)                         │
+│     display_order (INT)                 │
+│     is_visible (BOOLEAN)                │
+│     is_featured (BOOLEAN)               │
+│     view_count (INT)                    │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+│     deleted_at (TIMESTAMP) [SOFT DEL]   │
+└─────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                        CONFIGURATION & LOGGING
+═══════════════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────┐
+│         site_settings                   │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ UK  setting_key (VARCHAR)               │
+│     setting_value (TEXT)                │
+│     setting_type (ENUM)                 │
+│     group_name (VARCHAR)                │
+│     description (VARCHAR)               │
+│     is_public (BOOLEAN)                 │
+│     display_order (INT)                 │
+│     created_at (TIMESTAMP)              │
+│     updated_at (TIMESTAMP)              │
+└─────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────┐
+│           audit_logs                    │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│ FK  user_id → admin_users               │
+│     user_type (ENUM)                    │
+│     event_type (VARCHAR)                │
+│     auditable_type (VARCHAR)            │
+│     auditable_id (BIGINT)               │
+│     old_values (JSON)                   │
+│     new_values (JSON)                   │
+│     ip_address (VARCHAR)                │
+│     user_agent (VARCHAR)                │
+│     metadata (JSON)                     │
+│     created_at (TIMESTAMP)              │
+└─────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────┐
+│          system_logs                    │
+├─────────────────────────────────────────┤
+│ PK  id (BIGINT)                         │
+│     level (ENUM)                        │
+│     message (TEXT)                      │
+│     context (JSON)                      │
+│     channel (VARCHAR)                   │
+│     exception_class (VARCHAR)           │
+│     exception_message (TEXT)            │
+│     exception_trace (LONGTEXT)          │
+│     file (VARCHAR)                      │
+│     line (INT)                          │
+│     user_id (BIGINT)                    │
+│     ip_address (VARCHAR)                │
+│     url (VARCHAR)                       │
+│     method (VARCHAR)                    │
+│     created_at (TIMESTAMP)              │
+└─────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                           RELATIONSHIP SUMMARY
+═══════════════════════════════════════════════════════════════════════════════════════
+
+FOREIGN KEY RELATIONSHIPS:
+
+1.  admin_users → customer_requests (assigned_to)
+2.  admin_users → cost_estimates (created_by)
+3.  admin_users → news_posts (author_id)
+4.  admin_users → gallery_items (uploaded_by)
+5.  admin_users → audit_logs (user_id)
+
+6.  service_categories → service_categories (parent_id) [SELF-REFERENCING]
+7.  service_categories → services (category_id)
+
+8.  services → customer_requests (service_id)
+9.  services → gallery_items (service_id)
+
+10. materials → material_properties (material_id) [CASCADE DELETE]
+
+11. customer_requests → cost_estimates (customer_request_id)
+
+12. cost_estimates → cost_estimate_items (estimate_id) [CASCADE DELETE]
+
+
+POLYMORPHIC RELATIONSHIPS:
+
+1. pricing_rules.target_id → Can reference services.id OR materials.id
+   (determined by pricing_rules.rule_type)
+
+2. cost_estimate_items.item_id → Can reference services.id OR materials.id
+   (determined by cost_estimate_items.item_type)
+
+3. audit_logs.auditable_id → Can reference any table
+   (determined by audit_logs.auditable_type)
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                              LEGEND
+═══════════════════════════════════════════════════════════════════════════════════════
+
+PK    = Primary Key
+FK    = Foreign Key
+UK    = Unique Key
+ENUM  = Enumerated type
+JSON  = JSON data type
+[SOFT DEL] = Soft delete enabled (deleted_at column)
+[CASCADE]  = CASCADE on delete
+1:N   = One-to-many relationship
+│     = Relationship line
+▼     = Relationship direction
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                           DATABASE FEATURES
+═══════════════════════════════════════════════════════════════════════════════════════
+
+✓ MySQL 8.0+ compatible
+✓ InnoDB storage engine for ACID compliance
+✓ UTF8MB4 character set (full Unicode support)
+✓ Foreign key constraints with ON DELETE/UPDATE actions
+✓ Soft delete support on main entities
+✓ Composite indexes for common queries
+✓ JSON columns for flexible data
+✓ Timestamp tracking (created_at, updated_at)
+✓ Audit trail for sensitive operations
+✓ Hierarchical data support (service_categories)
+✓ Polymorphic relationships for flexibility
+✓ Full-text search ready
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
+                          VERSION INFORMATION
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Schema Version: 1.0.0
+Created: 2024-01-01
+MySQL Version: 8.0+
+Total Tables: 14
+Total Relationships: 12 + 3 polymorphic
+
+
+═══════════════════════════════════════════════════════════════════════════════════════
