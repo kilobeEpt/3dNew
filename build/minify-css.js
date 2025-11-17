@@ -9,21 +9,40 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
 }
 
-fs.readdirSync(cssDir).forEach(file => {
-    if (file.endsWith('.css') && !file.endsWith('.min.css')) {
-        const inputPath = path.join(cssDir, file);
-        const outputPath = path.join(outputDir, file.replace('.css', '.min.css'));
-        
-        const input = fs.readFileSync(inputPath, 'utf8');
-        const output = new CleanCSS().minify(input);
-        
-        if (output.errors.length > 0) {
-            console.error(`Error minifying ${file}:`, output.errors);
-        } else {
-            fs.writeFileSync(outputPath, output.styles);
-            console.log(`Minified: ${file} -> ${path.basename(outputPath)}`);
+const files = [
+    'variables.css',
+    'reset.css',
+    'components.css',
+    'header.css',
+    'hero.css',
+    'gallery.css',
+    'footer.css',
+    'main.css'
+];
+
+let combinedCss = '';
+
+files.forEach(file => {
+    const filePath = path.join(cssDir, file);
+    if (fs.existsSync(filePath)) {
+        let content = fs.readFileSync(filePath, 'utf8');
+        if (file === 'main.css') {
+            content = content.replace(/@import\s+['"][^'"]+['"]\s*;/g, '');
         }
+        combinedCss += content + '\n';
     }
 });
 
+const outputPath = path.join(outputDir, 'main.min.css');
+const output = new CleanCSS({ level: 2 }).minify(combinedCss);
+
+if (output.errors.length > 0) {
+    console.error('Error minifying CSS:', output.errors);
+    process.exit(1);
+} else if (output.warnings.length > 0) {
+    console.warn('Warnings:', output.warnings);
+}
+
+fs.writeFileSync(outputPath, output.styles);
+console.log(`Minified: main.css -> main.min.css (${(output.styles.length / 1024).toFixed(2)} KB)`);
 console.log('CSS minification complete!');

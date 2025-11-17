@@ -9,31 +9,45 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
 }
 
-async function minifyFiles() {
-    const files = fs.readdirSync(jsDir);
+async function minifyFiles(dir = jsDir, relativeDir = '') {
+    const files = fs.readdirSync(dir);
     
     for (const file of files) {
-        if (file.endsWith('.js') && !file.endsWith('.min.js')) {
-            const inputPath = path.join(jsDir, file);
-            const outputPath = path.join(outputDir, file.replace('.js', '.min.js'));
+        const fullPath = path.join(dir, file);
+        const stat = fs.statSync(fullPath);
+        
+        if (stat.isDirectory()) {
+            const subOutputDir = path.join(outputDir, relativeDir, file);
+            if (!fs.existsSync(subOutputDir)) {
+                fs.mkdirSync(subOutputDir, { recursive: true });
+            }
+            await minifyFiles(fullPath, path.join(relativeDir, file));
+        } else if (file.endsWith('.js') && !file.endsWith('.min.js')) {
+            const outputPath = path.join(outputDir, relativeDir, file.replace('.js', '.min.js'));
             
-            const input = fs.readFileSync(inputPath, 'utf8');
+            const input = fs.readFileSync(fullPath, 'utf8');
             
             try {
                 const output = await minify(input, {
                     compress: true,
-                    mangle: true
+                    mangle: true,
+                    module: true,
+                    toplevel: true
                 });
                 
                 fs.writeFileSync(outputPath, output.code);
-                console.log(`Minified: ${file} -> ${path.basename(outputPath)}`);
+                const relativePath = path.join(relativeDir, file);
+                console.log(`Minified: ${relativePath || file} -> ${relativePath.replace('.js', '.min.js') || file.replace('.js', '.min.js')}`);
             } catch (error) {
-                console.error(`Error minifying ${file}:`, error);
+                console.error(`Error minifying ${file}:`, error.message);
             }
         }
     }
-    
+}
+
+async function run() {
+    await minifyFiles();
     console.log('JS minification complete!');
 }
 
-minifyFiles();
+run();
