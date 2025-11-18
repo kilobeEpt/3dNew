@@ -9,7 +9,7 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
 }
 
-async function minifyFiles(dir = jsDir, relativeDir = '') {
+async function minifyFiles(dir, outputBase, relativeDir = '') {
     const files = fs.readdirSync(dir);
     
     for (const file of files) {
@@ -17,13 +17,13 @@ async function minifyFiles(dir = jsDir, relativeDir = '') {
         const stat = fs.statSync(fullPath);
         
         if (stat.isDirectory()) {
-            const subOutputDir = path.join(outputDir, relativeDir, file);
+            const subOutputDir = path.join(outputBase, relativeDir, file);
             if (!fs.existsSync(subOutputDir)) {
                 fs.mkdirSync(subOutputDir, { recursive: true });
             }
-            await minifyFiles(fullPath, path.join(relativeDir, file));
+            await minifyFiles(fullPath, outputBase, path.join(relativeDir, file));
         } else if (file.endsWith('.js') && !file.endsWith('.min.js')) {
-            const outputPath = path.join(outputDir, relativeDir, file.replace('.js', '.min.js'));
+            const outputPath = path.join(outputBase, relativeDir, file.replace('.js', '.min.js'));
             
             const input = fs.readFileSync(fullPath, 'utf8');
             
@@ -46,7 +46,20 @@ async function minifyFiles(dir = jsDir, relativeDir = '') {
 }
 
 async function run() {
-    await minifyFiles();
+    console.log('Minifying public JS files...');
+    await minifyFiles(jsDir, outputDir);
+    
+    const adminJsDir = path.join(__dirname, '../admin/assets/js');
+    const adminOutputDir = path.join(__dirname, '../admin/assets/dist');
+    
+    if (fs.existsSync(adminJsDir)) {
+        console.log('Minifying admin JS files...');
+        if (!fs.existsSync(adminOutputDir)) {
+            fs.mkdirSync(adminOutputDir, { recursive: true });
+        }
+        await minifyFiles(adminJsDir, adminOutputDir);
+    }
+    
     console.log('JS minification complete!');
 }
 
