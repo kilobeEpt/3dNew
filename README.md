@@ -2,6 +2,12 @@
 
 A modern, lightweight PHP-based API platform with built-in admin panel support, designed for shared hosting environments.
 
+> **🚨 nginx 403 Forbidden?** See [DEPLOYMENT_NGINX.md](DEPLOYMENT_NGINX.md) for complete solution.
+>
+> **📚 New to deployment?** See [DEPLOYMENT_GUIDES_README.md](DEPLOYMENT_GUIDES_README.md) for all guides.
+>
+> **🆘 Need help?** See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) or run `bash scripts/verify-server.sh`
+
 ## Features
 
 - **PSR-4 Autoloading**: Composer-based autoloading with organized namespace structure
@@ -584,18 +590,56 @@ Or visit the frontend and click the "Check API Health" button.
 
 ## Documentation
 
-For more detailed information, see:
+### 🚀 Deployment & Troubleshooting (NEW!)
+
+- **[DEPLOYMENT_GUIDES_README.md](DEPLOYMENT_GUIDES_README.md)** - 📚 **START HERE** - Complete documentation overview
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - General deployment guide (Apache & nginx)
+- **[DEPLOYMENT_NGINX.md](DEPLOYMENT_NGINX.md)** - **nginx 403 Forbidden solution** & nginx-specific deployment
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Common issues and solutions (database, email, uploads, etc.)
+- **[SETUP_SCRIPT_GUIDE.md](SETUP_SCRIPT_GUIDE.md)** - Automated setup script (`bash scripts/setup.sh`)
+
+**Quick Actions:**
+```bash
+# Automated setup
+bash scripts/setup.sh
+
+# Verify server configuration
+bash scripts/verify-server.sh
+```
+
+### API & Database Documentation
 
 - [DATABASE.md](DATABASE.md) - Complete database documentation, migrations, seeds, and data access layers
 - [API.md](API.md) - General API endpoint documentation
 - [API_PUBLIC.md](API_PUBLIC.md) - **Public API documentation with examples**
+- [ADMIN_API.md](ADMIN_API.md) - Admin API documentation
 - [QUICKSTART_API.md](QUICKSTART_API.md) - **Quick start guide for the public API**
 - [openapi.yaml](openapi.yaml) - **OpenAPI/Swagger specification**
+
+### Setup & Configuration
+
 - [INSTALLATION.md](INSTALLATION.md) - Detailed installation guide
-- [CODING_STANDARDS.md](CODING_STANDARDS.md) - Code style and standards
 - [QUICKSTART.md](QUICKSTART.md) - Quick start guide
+- [SSL_SETUP.md](SSL_SETUP.md) - SSL certificate setup
+- [LAUNCH_CHECKLIST.md](LAUNCH_CHECKLIST.md) - Pre-launch verification checklist
+
+### nginx Router
+
+- [NGINX_ROUTER_README.md](NGINX_ROUTER_README.md) - Complete nginx router documentation
+- [NGINX_ROUTER_DEPLOYMENT.md](NGINX_ROUTER_DEPLOYMENT.md) - nginx router deployment guide
+- [NGINX_ROUTER_IMPLEMENTATION.md](NGINX_ROUTER_IMPLEMENTATION.md) - Implementation details
+- [NGINX_ROUTER_CHECKLIST.md](NGINX_ROUTER_CHECKLIST.md) - Deployment checklist
+
+### Development
+
+- [CODING_STANDARDS.md](CODING_STANDARDS.md) - Code style and standards
 - [database/schema/README.md](database/schema/README.md) - Database schema documentation
 - [database/TESTING.md](database/TESTING.md) - Database testing guide
+
+### SEO & Features
+
+- [SEO_GUIDE.md](SEO_GUIDE.md) - Complete SEO implementation guide
+- [CALCULATOR_FEATURE.md](CALCULATOR_FEATURE.md) - 3D printing calculator feature
 
 ## License
 
@@ -603,4 +647,10 @@ MIT License
 
 ## Support
 
-For issues and questions, please open an issue in the repository.
+For issues and questions:
+
+1. **Check documentation** - [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+2. **Run diagnostics** - `bash scripts/verify-server.sh`
+3. **Open an issue** in the repository
+
+**nginx 403 Forbidden?** See [DEPLOYMENT_NGINX.md](DEPLOYMENT_NGINX.md#nginx-403-forbidden---complete-solution)
