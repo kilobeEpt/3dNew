@@ -4,108 +4,38 @@ This directory contains automated maintenance scripts for the 3D Print Platform.
 
 ## Scripts Overview
 
-### Backup Scripts
+### Setup & Deployment Scripts
 
-#### `backup-database.sh`
-Creates compressed MySQL database backups.
+#### `setup.sh` ⚡
+**Complete auto-deployment script** - deploys entire platform with one command.
 
-- **Schedule**: Daily at 4 AM (via cron)
-- **Retention**: 30 days
-- **Location**: `backups/database/`
-- **Notifications**: Emails admin on failure
-
-```bash
-# Run manually
-bash scripts/backup-database.sh
-
-# Cron entry
-0 4 * * * cd /home/c/ch167436/3dPrint && bash scripts/backup-database.sh >> logs/backup.log 2>&1
-```
-
-#### `backup-files.sh`
-Creates compressed archives of uploads directory.
-
-- **Schedule**: Weekly on Sunday at 5 AM (via cron)
-- **Retention**: 56 days (8 weeks)
-- **Location**: `backups/files/`
-- **Notifications**: Emails admin on failure
+- **Features**:
+  - Checks PHP 8.2+ and required extensions
+  - Tests MySQL connectivity
+  - Creates all necessary directories
+  - Sets correct permissions (755/644)
+  - Interactive `.env` configuration
+  - Auto-generates JWT secret (64+ characters)
+  - Installs Composer dependencies (handles 1.x/2.x)
+  - Runs database migrations
+  - Seeds initial data
+  - Creates default admin users
+  - Comprehensive verification
+  - Logs to `logs/setup.log`
+  - **Idempotent** - safe to run multiple times
 
 ```bash
-# Run manually
-bash scripts/backup-files.sh
-
-# Cron entry
-0 5 * * 0 cd /home/c/ch167436/3dPrint && bash scripts/backup-files.sh >> logs/backup.log 2>&1
+# One-command deployment
+bash scripts/setup.sh
 ```
 
-### Monitoring Scripts
+**Default Admin Credentials:**
+- Username: `admin` / Password: `admin123`
+- ⚠️ **Change immediately after first login!**
 
-#### `check-errors.php`
-Monitors application logs for errors and sends email alerts.
+**See:** `SETUP_README.md` for quick guide, `SETUP_SCRIPT_GUIDE.md` for complete documentation.
 
-- **Schedule**: Hourly (via cron)
-- **Threshold**: 5 errors per hour
-- **Actions**: Sends email with error summary if threshold exceeded
-- **Log**: `logs/monitoring.log`
-
-```bash
-# Run manually
-php scripts/check-errors.php
-
-# Cron entry
-0 * * * * cd /home/c/ch167436/3dPrint && php scripts/check-errors.php >> logs/monitoring.log 2>&1
-```
-
-### Maintenance Scripts
-
-#### `rotate-logs.php`
-Rotates and compresses old log files.
-
-- **Schedule**: Daily at 3 AM (via cron)
-- **Compression**: Files older than 7 days
-- **Deletion**: Files older than 30 days
-- **Log**: `logs/cron.log`
-
-```bash
-# Run manually
-php scripts/rotate-logs.php
-
-# Cron entry
-0 3 * * * cd /home/c/ch167436/3dPrint && php scripts/rotate-logs.php >> logs/cron.log 2>&1
-```
-
-#### `cleanup-temp.php`
-Cleans up temporary files and incomplete uploads.
-
-- **Schedule**: Daily at 6 AM (via cron)
-- **Actions**: Removes .tmp, .partial files older than 24 hours
-- **Log**: `logs/cron.log`
-
-```bash
-# Run manually
-php scripts/cleanup-temp.php
-
-# Cron entry
-0 6 * * * cd /home/c/ch167436/3dPrint && php scripts/cleanup-temp.php >> logs/cron.log 2>&1
-```
-
-#### `generate-sitemap.php`
-Generates sitemap.xml for search engines.
-
-- **Schedule**: Daily at 2 AM (via cron)
-- **Output**: `public_html/sitemap-static.xml`
-- **Includes**: Static pages, services, gallery items
-- **Log**: `logs/cron.log`
-
-```bash
-# Run manually
-php scripts/generate-sitemap.php
-
-# Cron entry
-0 2 * * * cd /home/c/ch167436/3dPrint && php scripts/generate-sitemap.php >> logs/cron.log 2>&1
-```
-
-### Deployment Scripts
+---
 
 #### `deploy.sh`
 Automated deployment script for production.
@@ -161,6 +91,113 @@ bash scripts/setup-composer-dependencies.sh
 ```
 
 **Note**: This script helps with Composer 1.9.0 issues where Packagist no longer supports old Composer versions. See [COMPOSER_PHP82_UPGRADE.md](../COMPOSER_PHP82_UPGRADE.md) for details.
+
+---
+
+### Backup Scripts
+
+#### `backup-database.sh`
+Creates compressed MySQL database backups.
+
+- **Schedule**: Daily at 4 AM (via cron)
+- **Retention**: 30 days
+- **Location**: `backups/database/`
+- **Notifications**: Emails admin on failure
+
+```bash
+# Run manually
+bash scripts/backup-database.sh
+
+# Cron entry
+0 4 * * * cd /home/c/ch167436/3dPrint && bash scripts/backup-database.sh >> logs/backup.log 2>&1
+```
+
+#### `backup-files.sh`
+Creates compressed archives of uploads directory.
+
+- **Schedule**: Weekly on Sunday at 5 AM (via cron)
+- **Retention**: 56 days (8 weeks)
+- **Location**: `backups/files/`
+- **Notifications**: Emails admin on failure
+
+```bash
+# Run manually
+bash scripts/backup-files.sh
+
+# Cron entry
+0 5 * * 0 cd /home/c/ch167436/3dPrint && bash scripts/backup-files.sh >> logs/backup.log 2>&1
+```
+
+### Monitoring Scripts
+
+#### `check-errors.php`
+Monitors application logs for errors and sends email alerts.
+
+- **Schedule**: Hourly (via cron)
+- **Threshold**: 5 errors per hour
+- **Actions**: Sends email with error summary if threshold exceeded
+- **Log**: `logs/monitoring.log`
+
+```bash
+# Run manually
+php scripts/check-errors.php
+
+# Cron entry
+0 * * * * cd /home/c/ch167436/3dPrint && php scripts/check-errors.php >> logs/monitoring.log 2>&1
+```
+
+---
+
+### Maintenance Scripts
+
+#### `rotate-logs.php`
+Rotates and compresses old log files.
+
+- **Schedule**: Daily at 3 AM (via cron)
+- **Compression**: Files older than 7 days
+- **Deletion**: Files older than 30 days
+- **Log**: `logs/cron.log`
+
+```bash
+# Run manually
+php scripts/rotate-logs.php
+
+# Cron entry
+0 3 * * * cd /home/c/ch167436/3dPrint && php scripts/rotate-logs.php >> logs/cron.log 2>&1
+```
+
+#### `cleanup-temp.php`
+Cleans up temporary files and incomplete uploads.
+
+- **Schedule**: Daily at 6 AM (via cron)
+- **Actions**: Removes .tmp, .partial files older than 24 hours
+- **Log**: `logs/cron.log`
+
+```bash
+# Run manually
+php scripts/cleanup-temp.php
+
+# Cron entry
+0 6 * * * cd /home/c/ch167436/3dPrint && php scripts/cleanup-temp.php >> logs/cron.log 2>&1
+```
+
+#### `generate-sitemap.php`
+Generates sitemap.xml for search engines.
+
+- **Schedule**: Daily at 2 AM (via cron)
+- **Output**: `public_html/sitemap-static.xml`
+- **Includes**: Static pages, services, gallery items
+- **Log**: `logs/cron.log`
+
+```bash
+# Run manually
+php scripts/generate-sitemap.php
+
+# Cron entry
+0 2 * * * cd /home/c/ch167436/3dPrint && php scripts/generate-sitemap.php >> logs/cron.log 2>&1
+```
+
+---
 
 ## Complete Cron Configuration
 
