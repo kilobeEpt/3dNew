@@ -209,7 +209,8 @@ try {
     checkPass("Database connection successful");
     
     // Check if tables exist
-    $tables = $db->query("SHOW TABLES");
+    $tablesResult = $db->query("SHOW TABLES");
+    $tables = $tablesResult->fetchAll();
     if (count($tables) > 0) {
         checkPass("Database has " . count($tables) . " tables");
     } else {
