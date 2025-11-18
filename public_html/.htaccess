@@ -71,15 +71,25 @@
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     
+    # Content Security Policy (adjust as needed for your domain)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://hcaptcha.com https://*.hcaptcha.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://hcaptcha.com https://*.hcaptcha.com; frame-src https://www.google.com https://hcaptcha.com https://*.hcaptcha.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+    
     # Remove X-Powered-By header
     Header unset X-Powered-By
+    Header unset Server
 </IfModule>
 
-# Redirect to HTTPS (uncomment if using SSL)
+# Redirect to HTTPS (uncomment when SSL certificate is active)
 # <IfModule mod_rewrite.c>
 #     RewriteEngine On
 #     RewriteCond %{HTTPS} off
 #     RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+# </IfModule>
+
+# HSTS - HTTP Strict Transport Security (uncomment when SSL is active)
+# Forces browsers to use HTTPS for 1 year
+# <IfModule mod_headers.c>
+#     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
 # </IfModule>
 
 # Custom error pages
