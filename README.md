@@ -2,6 +2,24 @@
 
 A modern, lightweight PHP-based API platform with built-in admin panel support, designed for shared hosting environments.
 
+## 🚀 Quick Deployment
+
+**Production Deployment (One Command):**
+```bash
+bash scripts/setup.sh
+```
+
+**Troubleshooting 403 Errors:**
+```bash
+bash scripts/diagnose-403.sh
+```
+
+**Complete Guides:**
+- 📘 **[FINAL_DEPLOYMENT_GUIDE.md](FINAL_DEPLOYMENT_GUIDE.md)** - Complete deployment with 403 fix
+- 🔧 **[DEPLOYMENT_FIX_403.md](DEPLOYMENT_FIX_403.md)** - Solving nginx 403 Forbidden errors
+- ⚡ **[SETUP_README.md](SETUP_README.md)** - Quick setup guide
+- 🌐 **[NGINX_ROUTER_DEPLOYMENT.md](NGINX_ROUTER_DEPLOYMENT.md)** - nginx configuration
+
 ## Features
 
 - **PSR-4 Autoloading**: Composer-based autoloading with organized namespace structure
