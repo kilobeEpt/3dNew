@@ -144,6 +144,24 @@ Pre-deployment verification script.
 php scripts/verify-deployment.php
 ```
 
+#### `setup-composer-dependencies.sh`
+Setup Composer dependencies for PHP 8.2 with Composer 1.x compatibility.
+
+- **Features**:
+  - Checks PHP version (requires 8.2+)
+  - Detects Composer version
+  - Handles Composer 1.x limitations
+  - Installs dependencies with optimization
+  - Verifies autoloader
+  - Tests installation
+
+```bash
+# Run setup
+bash scripts/setup-composer-dependencies.sh
+```
+
+**Note**: This script helps with Composer 1.9.0 issues where Packagist no longer supports old Composer versions. See [COMPOSER_PHP82_UPGRADE.md](../COMPOSER_PHP82_UPGRADE.md) for details.
+
 ## Complete Cron Configuration
 
 Add all cron jobs at once:
