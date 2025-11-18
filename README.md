@@ -94,12 +94,42 @@ project/
 
 ### Prerequisites
 
-- PHP 7.4 or higher
-- Composer
-- MySQL/MariaDB (optional, for database features)
+- PHP 8.2 or higher
+- Composer 2.x (or Composer 1.9.0+ with automatic 2.x download)
+- MySQL/MariaDB 5.7+ / 10.2+
 - Node.js and npm (optional, for asset building)
 
-### Setup Steps
+### Quick Setup (Automated) ⚡
+
+**Deploy everything with a single command:**
+
+```bash
+bash scripts/setup.sh
+```
+
+The automated setup script will:
+- ✅ Check PHP version and extensions
+- ✅ Test MySQL connectivity
+- ✅ Create all necessary directories
+- ✅ Set correct permissions
+- ✅ Configure `.env` interactively
+- ✅ Install Composer dependencies
+- ✅ Run database migrations
+- ✅ Seed initial data
+- ✅ Create admin users
+- ✅ Verify complete deployment
+
+**Default Admin Credentials:**
+- Username: `admin` / Password: `admin123`
+- **⚠️ Change immediately after first login!**
+
+**See:** `SETUP_README.md` for quick guide, `SETUP_SCRIPT_GUIDE.md` for complete documentation.
+
+---
+
+### Manual Setup Steps
+
+If you prefer manual installation or the automated script fails:
 
 1. **Clone the repository**
    ```bash
@@ -109,7 +139,7 @@ project/
 
 2. **Install PHP dependencies**
    ```bash
-   composer install
+   composer install --no-dev --optimize-autoloader
    ```
 
 3. **Configure environment variables**
@@ -121,7 +151,7 @@ project/
    - Database credentials
    - Mail server settings
    - Application environment (development/production)
-   - Security settings
+   - Security settings (JWT_SECRET - minimum 64 characters!)
 
 4. **Configure CAPTCHA (for public API)**
    
