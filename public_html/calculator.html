@@ -3,10 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Calculate the cost of your 3D printing project with our interactive calculator.">
-    <title>Cost Calculator - Manufacturing Platform</title>
+    <meta name="description" content="Calculate the cost of your 3D printing project instantly with our interactive calculator. Get accurate pricing for materials, dimensions, and finishing options.">
+    <meta name="keywords" content="3D printing calculator, cost estimator, 3D printing price, manufacturing quote, instant pricing">
+    <title>3D Printing Cost Calculator - Manufacturing Platform</title>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/calculator.html">
+    <meta property="og:title" content="3D Printing Cost Calculator - Manufacturing Platform">
+    <meta property="og:description" content="Calculate the cost of your 3D printing project instantly with our interactive calculator. Get accurate pricing for materials, dimensions, and finishing options.">
+    <meta property="og:site_name" content="Manufacturing Platform">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="3D Printing Cost Calculator - Manufacturing Platform">
+    <meta name="twitter:description" content="Calculate the cost of your 3D printing project instantly with our interactive calculator. Get accurate pricing for materials, dimensions, and finishing options.">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="/calculator.html">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/calculator.css">
+    
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Calculator"
+            }
+        ]
+    }
+    </script>
+    <!-- Service Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": "3D Printing Cost Calculator",
+        "provider": {
+            "@type": "Organization",
+            "name": "Manufacturing Platform"
+        },
+        "description": "Calculate the cost of your 3D printing project instantly with our interactive calculator",
+        "areaServed": "Worldwide",
+        "availableChannel": {
+            "@type": "ServiceChannel",
+            "serviceUrl": "/calculator.html"
+        }
+    }
+    </script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -370,9 +430,9 @@
         </svg>
     </button>
 
-    <script type="module" src="/assets/js/main.js"></script>
-    <script type="module" src="/assets/js/navigation.js"></script>
-    <script type="module" src="/assets/js/theme.js"></script>
-    <script type="module" src="/assets/js/pages/calculator.js"></script>
+    <script type="module" src="/assets/js/main.js" defer></script>
+    <script type="module" src="/assets/js/navigation.js" defer></script>
+    <script type="module" src="/assets/js/theme.js" defer></script>
+    <script type="module" src="/assets/js/pages/calculator.js" defer></script>
 </body>
 </html>
