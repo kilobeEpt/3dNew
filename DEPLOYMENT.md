@@ -1,19 +1,24 @@
 # Deployment Guide for Shared Hosting
 
-This guide provides comprehensive instructions for deploying the 3D Print Platform to shared hosting environments.
+This guide provides comprehensive instructions for deploying the 3D Print Platform to shared hosting environments (both Apache and nginx).
+
+> **Got nginx 403 Forbidden?** See [DEPLOYMENT_NGINX.md](DEPLOYMENT_NGINX.md) for complete solution.
+> 
+> **Need troubleshooting?** See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common issues.
 
 ## Table of Contents
 
 1. [Pre-Deployment Checklist](#pre-deployment-checklist)
 2. [Server Requirements](#server-requirements)
-3. [Deployment Steps](#deployment-steps)
-4. [SSL Certificate Setup](#ssl-certificate-setup)
-5. [Database Setup](#database-setup)
-6. [Cron Jobs Configuration](#cron-jobs-configuration)
-7. [Backup Strategy](#backup-strategy)
-8. [Monitoring and Alerts](#monitoring-and-alerts)
-9. [Post-Deployment Testing](#post-deployment-testing)
-10. [Troubleshooting](#troubleshooting)
+3. [Server Type Detection](#server-type-detection)
+4. [Deployment Steps](#deployment-steps)
+5. [SSL Certificate Setup](#ssl-certificate-setup)
+6. [Database Setup](#database-setup)
+7. [Cron Jobs Configuration](#cron-jobs-configuration)
+8. [Backup Strategy](#backup-strategy)
+9. [Monitoring and Alerts](#monitoring-and-alerts)
+10. [Post-Deployment Testing](#post-deployment-testing)
+11. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -64,6 +69,47 @@ ls /usr/bin/php*
 # Set default (if using cPanel)
 # Go to cPanel > Select PHP Version
 ```
+
+---
+
+## Server Type Detection
+
+This platform supports both **Apache** and **nginx** web servers. Detect your server type:
+
+```bash
+# Method 1: Check running processes
+ps aux | grep -E "nginx|httpd|apache2" | grep -v grep
+
+# Method 2: Check HTTP headers
+curl -I http://yourdomain.com | grep -i "^server:"
+
+# Method 3: Check cPanel
+# Look for "Web Server" in cPanel dashboard
+```
+
+### Apache vs nginx
+
+| Feature | Apache | nginx |
+|---------|--------|-------|
+| **Configuration** | `.htaccess` files | PHP router or server config |
+| **Setup Complexity** | Easy (automatic) | Medium (may need config) |
+| **Routing** | mod_rewrite | PHP-based or nginx config |
+| **Shared Hosting** | Very common | Common (Russia/Europe) |
+| **This Platform** | ✅ Works out of the box | ✅ PHP router included |
+
+### nginx Users: Important!
+
+If you have nginx:
+
+1. **Use the PHP router** in `public_html/index.php` (already included)
+2. **May need nginx configuration** - see [DEPLOYMENT_NGINX.md](DEPLOYMENT_NGINX.md)
+3. **403 Forbidden errors?** - see [DEPLOYMENT_NGINX.md](DEPLOYMENT_NGINX.md) for complete solution
+
+### Apache Users
+
+- No special configuration needed
+- `.htaccess` files handle all routing
+- Works immediately after upload
 
 ---
 
