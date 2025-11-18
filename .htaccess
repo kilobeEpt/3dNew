@@ -1,0 +1,23 @@
+# Root Directory Protection
+# This file protects the project root directory from web access
+
+# Deny access to all files in this directory
+<FilesMatch ".*">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to specific files
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|\.env(\.example)?|\.git.*|README\.md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

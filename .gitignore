@@ -1,14 +1,46 @@
+# Environment Configuration
+.env
+config.php
+
 # Dependencies
 /vendor/
 node_modules/
 
-# Environment
-.env
-
 # Logs
 logs/*.log
 logs/*.txt
+logs/*.gz
 !logs/.gitkeep
+
+# Backups
+backups/database/*
+!backups/database/.gitkeep
+backups/files/*
+!backups/files/.gitkeep
+
+# Uploaded Files
+uploads/*
+!uploads/.gitkeep
+
+# Build artifacts
+public_html/assets/dist/
+admin/assets/dist/
+*.min.css
+*.min.js
+
+# Cache (if implemented)
+cache/*
+!cache/.gitkeep
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.cache
+
+# Database exports
+*.sql
+*.sql.gz
 
 # OS Files
 .DS_Store
@@ -21,18 +53,15 @@ Thumbs.db
 *.swo
 *~
 
-# Build artifacts
-public_html/assets/dist/
-admin/assets/dist/
-*.min.css
-*.min.js
+# Composer
+composer.phar
+composer.lock
 
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.cache
+# NPM debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Uploads
-uploads/
-!uploads/.gitkeep
+# Coverage and test reports
+coverage/
+.phpunit.cache/
