@@ -3,9 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="View our portfolio of completed projects and manufacturing excellence">
+    <meta name="description" content="View our portfolio of completed projects showcasing manufacturing excellence, precision work, and innovative 3D printing solutions">
+    <meta name="keywords" content="project gallery, manufacturing portfolio, 3D printing examples, completed projects, case studies">
     <title>Gallery - Manufacturing Platform</title>
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/gallery.html">
+    <meta property="og:title" content="Gallery - Manufacturing Platform">
+    <meta property="og:description" content="View our portfolio of completed projects showcasing manufacturing excellence, precision work, and innovative 3D printing solutions">
+    <meta property="og:site_name" content="Manufacturing Platform">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gallery - Manufacturing Platform">
+    <meta name="twitter:description" content="View our portfolio of completed projects showcasing manufacturing excellence, precision work, and innovative 3D printing solutions">
+    
+    <link rel="canonical" href="/gallery.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link rel="stylesheet" href="/assets/css/main.css">
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "/"},
+            {"@type": "ListItem", "position": 2, "name": "Gallery"}
+        ]
+    }
+    </script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -87,7 +114,7 @@
         </svg>
     </button>
 
-    <script type="module" src="/assets/js/main.js"></script>
-    <script type="module" src="/assets/js/pages/gallery.js"></script>
+    <script type="module" src="/assets/js/main.js" defer></script>
+    <script type="module" src="/assets/js/pages/gallery.js" defer></script>
 </body>
 </html>

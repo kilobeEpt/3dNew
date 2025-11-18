@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Learn about Manufacturing Platform - our mission, values, and commitment to excellence">
+    <meta name="description" content="Learn about Manufacturing Platform - our mission, values, and commitment to excellence in precision manufacturing and 3D printing">
+    <meta name="keywords" content="about us, manufacturing company, precision engineering, 3D printing experts, company profile">
     <title>About Us - Manufacturing Platform</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/about.html">
+    <meta property="og:title" content="About Us - Manufacturing Platform">
+    <meta property="og:description" content="Learn about Manufacturing Platform - our mission, values, and commitment to excellence in precision manufacturing and 3D printing">
+    <meta property="og:site_name" content="Manufacturing Platform">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="About Us - Manufacturing Platform">
+    <meta name="twitter:description" content="Learn about Manufacturing Platform - our mission, values, and commitment to excellence in precision manufacturing and 3D printing">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="/about.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link rel="stylesheet" href="/assets/css/main.css">
+    
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "/"},
+            {"@type": "ListItem", "position": 2, "name": "About"}
+        ]
+    }
+    </script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -146,7 +177,7 @@
         </svg>
     </button>
 
-    <script type="module" src="/assets/js/main.js"></script>
+    <script type="module" src="/assets/js/main.js" defer></script>
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>

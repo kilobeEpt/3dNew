@@ -13,10 +13,14 @@ use App\Controllers\Api\CostEstimatesController;
 use App\Controllers\Api\ContactController;
 use App\Controllers\Api\CsrfController;
 use App\Controllers\Api\AnalyticsController;
+use App\Controllers\Api\SitemapController;
+use App\Controllers\Api\RobotsController;
 use App\Middleware\CsrfMiddleware;
 
 $router->get('/health', HealthController::class . '@check');
 $router->get('/csrf-token', CsrfController::class . '@getToken');
+$router->get('/sitemap.xml', SitemapController::class . '@generate');
+$router->get('/robots.txt', RobotsController::class . '@generate');
 
 $router->post('/analytics/events', AnalyticsController::class . '@store');
 

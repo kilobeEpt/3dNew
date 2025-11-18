@@ -3,9 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Latest news and updates from Manufacturing Platform">
+    <meta name="description" content="Latest news, updates, and insights from Manufacturing Platform including industry trends, new technologies, and company announcements">
+    <meta name="keywords" content="manufacturing news, 3D printing updates, industry insights, company blog, technology news">
     <title>News & Updates - Manufacturing Platform</title>
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/news.html">
+    <meta property="og:title" content="News & Updates - Manufacturing Platform">
+    <meta property="og:description" content="Latest news, updates, and insights from Manufacturing Platform including industry trends, new technologies, and company announcements">
+    <meta property="og:site_name" content="Manufacturing Platform">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="News & Updates - Manufacturing Platform">
+    <meta name="twitter:description" content="Latest news, updates, and insights from Manufacturing Platform including industry trends, new technologies, and company announcements">
+    
+    <link rel="canonical" href="/news.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link rel="stylesheet" href="/assets/css/main.css">
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "/"},
+            {"@type": "ListItem", "position": 2, "name": "News"}
+        ]
+    }
+    </script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -85,7 +112,7 @@
         </svg>
     </button>
 
-    <script type="module" src="/assets/js/main.js"></script>
-    <script type="module" src="/assets/js/pages/news.js"></script>
+    <script type="module" src="/assets/js/main.js" defer></script>
+    <script type="module" src="/assets/js/pages/news.js" defer></script>
 </body>
 </html>
