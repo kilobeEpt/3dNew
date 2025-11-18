@@ -55,7 +55,9 @@ Thumbs.db
 
 # Composer
 composer.phar
-composer.lock
+# composer.lock - MUST be committed for proper dependency management
+# Uncomment line below only if you want to ignore composer.lock (not recommended)
+# composer.lock
 
 # NPM debug logs
 npm-debug.log*
