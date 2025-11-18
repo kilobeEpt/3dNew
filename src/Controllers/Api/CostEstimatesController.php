@@ -229,7 +229,7 @@ class CostEstimatesController
 
     private function getDefaultEstimateTemplate(): string
     {
-        return <<<HTML
+        return <<<'HTML'
 <!DOCTYPE html>
 <html>
 <head>
